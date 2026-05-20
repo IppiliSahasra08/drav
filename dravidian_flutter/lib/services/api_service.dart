@@ -5,6 +5,7 @@
 // ---------------------------------------------------------------------------
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/exercise.dart';
@@ -15,29 +16,70 @@ class ApiService {
   factory ApiService() => _instance;
   ApiService._internal();
 
-  String get _base => dotenv.env['BACKEND_URL'] ?? '';
+  String get _base => dotenv.env['BACKEND_URL'] ?? dotenv.env['API_URL'] ?? '';
 
   Map<String, String> get _headers => {'Content-Type': 'application/json'};
 
   // POST /auth/sync
-  Future<void> syncUserProfile({
+  /// Attempts to sync the signed-in user profile with the backend.
+  /// Returns true on success, false on failure. Does not throw to avoid
+  /// bringing down the UI flow during login.
+  Future<bool> syncUserProfile({
     required String userId,
     required String email,
     required String displayName,
     String role = 'child',
   }) async {
-    final res = await http.post(
-      Uri.parse('$_base/auth/sync'),
-      headers: _headers,
-      body: jsonEncode({
-        'user_id': userId,
-        'email': email,
-        'display_name': displayName,
-        'role': role,
-      }),
-    );
-    if (res.statusCode != 200) {
-      throw Exception('syncUserProfile failed: ${res.body}');
+    try {
+      final safeUserId = userId.trim();
+      final safeEmail = email.trim();
+      final safeDisplayName = displayName.trim().isNotEmpty
+          ? displayName.trim()
+          : (safeEmail.contains('@') ? safeEmail.split('@').first : 'User');
+      final safeRole = role.trim().isNotEmpty ? role.trim() : 'child';
+      final baseUrl = (dotenv.env['BACKEND_URL'] ?? dotenv.env['API_URL'] ?? '').trim();
+
+      if (safeUserId.isEmpty) {
+        debugPrint('syncUserProfile skipped: missing user id');
+        return false;
+      }
+
+      if (baseUrl.isEmpty) {
+        debugPrint('syncUserProfile skipped: missing BACKEND_URL or API_URL in .env');
+        return false;
+      }
+
+      final uri = Uri.tryParse('$baseUrl/auth/sync');
+      if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
+        debugPrint('syncUserProfile skipped: invalid backend URL "$baseUrl"');
+        return false;
+      }
+
+      final body = jsonEncode({
+        'user_id': safeUserId,
+        'email': safeEmail,
+        'display_name': safeDisplayName,
+        'role': safeRole,
+      });
+
+      debugPrint('syncUserProfile started for user $safeUserId');
+      final res = await http.post(
+        uri,
+        headers: _headers,
+        body: body,
+      );
+
+      if (res.statusCode != 200) {
+        debugPrint('syncUserProfile failed: HTTP ${res.statusCode} ${res.body}');
+        return false;
+      }
+
+      debugPrint('syncUserProfile succeeded: ${res.body}');
+      return true;
+    } catch (e, st) {
+      debugPrint('syncUserProfile exception: $e');
+      debugPrint(st.toString());
+      return false;
     }
   }
 
@@ -46,13 +88,46 @@ class ApiService {
     required String userId,
     required String language,
   }) async {
-    final uri = Uri.parse('$_base/exercises/next')
-        .replace(queryParameters: {'user_id': userId, 'language': language});
-    final res = await http.get(uri, headers: _headers);
-    if (res.statusCode != 200) {
-      throw Exception('fetchNextExercise failed: ${res.body}');
+    final base = _base.trim();
+    if (base.isEmpty) {
+      throw Exception('fetchNextExercise failed: BACKEND_URL is not set in .env');
     }
-    return ExerciseBundle.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+
+    final uri = Uri.parse('$base/exercises/next')
+        .replace(queryParameters: {'user_id': userId, 'language': language});
+    try {
+      debugPrint('fetchNextExercise: GET $uri');
+      final res = await http.get(uri, headers: _headers);
+      debugPrint('fetchNextExercise: HTTP ${res.statusCode}');
+      debugPrint('fetchNextExercise: body: ${res.body}');
+
+      if (res.statusCode != 200) {
+        throw Exception('fetchNextExercise failed: HTTP ${res.statusCode}: ${res.body}');
+      }
+
+      // Guard against HTML error pages (e.g., index.html served by webserver)
+      final contentType = res.headers['content-type'] ?? '';
+      final bodyTrim = res.body.trimLeft();
+      if (contentType.toLowerCase().contains('text/html') || bodyTrim.startsWith('<')) {
+        throw Exception('fetchNextExercise failed: expected JSON but received HTML/HTML error page');
+      }
+
+      final parsed = jsonDecode(res.body);
+      if (parsed is! Map<String, dynamic>) {
+        throw Exception('fetchNextExercise parse error: expected object, got ${parsed.runtimeType}');
+      }
+
+      try {
+        return ExerciseBundle.fromJson(parsed as Map<String, dynamic>);
+      } catch (e, st) {
+        debugPrint('fetchNextExercise: ExerciseBundle.fromJson failed: $e');
+        debugPrint(st.toString());
+        throw Exception('fetchNextExercise parse error: $e');
+      }
+    } catch (e) {
+      debugPrint('fetchNextExercise exception: $e');
+      rethrow;
+    }
   }
 
   // POST /exercises/submit

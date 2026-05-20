@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 app = FastAPI(title="Dravidian Learn ITS Backend")
 
 app.add_middleware(
@@ -21,7 +22,12 @@ app.add_middleware(
 
 # Supabase Client
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError('SUPABASE_URL and SUPABASE_ANON_KEY must be set in environment')
+
+# Initialize Supabase client
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 class AuthSyncRequest(BaseModel):
     user_id: str
@@ -41,13 +47,23 @@ class SubmissionRequest(BaseModel):
 async def auth_sync(req: AuthSyncRequest):
     """Upserts user profile on login."""
     try:
-        data, count = supabase.table("profiles").upsert({
+        # Prepare upsert payload. Include email if provided so schema with 'email'
+        payload = {
             "id": req.user_id,
             "display_name": req.display_name,
-            "role": req.role
-        }).execute()
-        return {"status": "ok", "data": data}
+            "role": req.role,
+        }
+        if getattr(req, 'email', None):
+            payload['email'] = req.email
+
+        # Use upsert to create or update the profile. Return the row data for debugging.
+        res = supabase.table("profiles").upsert(payload).select().execute()
+        # Debugging/logging helpful when diagnosing schema/migration issues
+        print('/auth/sync upsert payload:', payload)
+        print('/auth/sync supabase response status:', getattr(res, 'status_code', None))
+        return {"status": "ok", "data": getattr(res, 'data', None)}
     except Exception as e:
+        print('auth_sync error:', str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/exercises/next")

@@ -1,0 +1,9 @@
+[
+  { "category": "Greetings", "type": "mcq", "character": "నమస్తే", "transliteration": "Namaste", "question": "What does this mean?", "options": ["Hello", "Thank you", "Goodbye"], "answer": "Hello" },
+  { "category": "Greetings", "type": "mcq", "character": "ధన్యవాదాలు", "transliteration": "Dhanyavaadaalu", "question": "What does this mean?", "options": ["Sorry", "Thank you", "Yes"], "answer": "Thank you" },
+  { "category": "Greetings", "type": "mcq", "character": "క్షమించండి", "transliteration": "Kshaminchandi", "question": "What does this mean?", "options": ["Yes", "No", "Sorry"], "answer": "Sorry" },
+  { "category": "Greetings", "type": "mcq", "character": "అవును", "transliteration": "Avunu", "question": "What does this mean?", "options": ["No", "Yes", "Maybe"], "answer": "Yes" },
+  { "category": "Greetings", "type": "mcq", "character": "కాదు", "transliteration": "Kaadu", "question": "What does this mean?", "options": ["No", "Hello", "Thank you"], "answer": "No" },
+  { "category": "Greetings", "type": "mcq", "character": "మీ పేరు ఏమిటి?", "transliteration": "Mee peru emiti?", "question": "What does this mean?", "options": ["How are you?", "What is your name?", "Who are you?"], "answer": "What is your name?" },
+  { "category": "Greetings", "type": "mcq", "character": "మీరు ఎలా ఉన్నారు?", "transliteration": "Meeru ela unnaru?", "question": "What does this mean?", "options": ["What is your name?", "How are you?", "Where are you?"], "answer": "How are you?" }
+]

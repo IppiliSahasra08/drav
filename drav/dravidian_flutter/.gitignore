@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Flutter/Dart
 .dart_tool/
 .flutter-plugins
@@ -27,15 +26,3 @@ ios/*.xcworkspace
 .idea/
 .vscode/
 *.iml
-=======
-# Flutter-related
-**/Flutter/ephemeral/
-**/Pods/
-
-# Xcode-related
-**/dgph
-**/xcuserdata/
-
-.env
-node_modules/
->>>>>>> 667eb6ca44aba6ad2375832a11c7ecc12cc92632

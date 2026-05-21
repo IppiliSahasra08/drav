@@ -1,0 +1,25 @@
+[
+  {
+    "category": "Vowels",
+    "type": "mcq",
+    "question": "Which letter is 'AA'?",
+    "character": "ஆ",
+    "options": ["அ", "ఆ", "ఆ", "ఇ"],
+    "answer": "ఆ"
+  },
+  {
+    "category": "Vowels",
+    "type": "typing",
+    "question": "Type the transliteration for the letter shown",
+    "character": "க",
+    "answer": "ka"
+  },
+  {
+    "category": "Consonants",
+    "type": "mcq",
+    "question": "Which character is 'nga'?",
+    "character": "ங",
+    "options": ["ங", "க", "ச", "ட"],
+    "answer": "ங"
+  }
+]

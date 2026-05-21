@@ -16,6 +16,7 @@ import 'screens/quiz_screen.dart';
 import 'screens/result_screen.dart';
 import 'theme.dart';
 import 'screens/signup_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'screens/adult_dashboard_screen.dart';
 
 Future<void> main() async {
@@ -114,6 +115,7 @@ class DravidianLearnApp extends StatelessWidget {
       routes: {
         '/login':           (_) => const LoginScreen(),
         '/signup':          (_) => const SignUpScreen(),
+        '/onboarding':      (_) => const OnboardingScreen(),
         '/home':            (_) => const HomeScreen(),       // child dashboard
         '/adult-dashboard': (_) => const AdultDashboardScreen(),
         '/lesson':          (_) => const LessonScreen(),

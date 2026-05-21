@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../theme.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -10,9 +12,10 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final _emailController    = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _nameController     = TextEditingController();
+  final _emailController      = TextEditingController();
+  final _passwordController   = TextEditingController();
+  final _confirmController    = TextEditingController();
+  final _nameController       = TextEditingController();
   String _role = 'child'; // default
   bool _loading = false;
   String? _error;
@@ -21,20 +24,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (_loading) return;
     setState(() { _loading = true; _error = null; });
 
+    if (_nameController.text.trim().isEmpty ||
+        _emailController.text.trim().isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmController.text.isEmpty) {
+      setState(() {
+        _error = 'Please fill in all fields.';
+        _loading = false;
+      });
+      return;
+    }
+
+    if (_passwordController.text != _confirmController.text) {
+      setState(() {
+        _error = 'Passwords do not match.';
+        _loading = false;
+      });
+      return;
+    }
+
     try {
-      final client = Supabase.instance.client;
+      // Get backend URL from environment
+      final backendUrl = (dotenv.env['BACKEND_URL'] ?? dotenv.env['API_URL'] ?? '').trim();
+      if (backendUrl.isEmpty) {
+        throw Exception('BACKEND_URL is not configured in .env');
+      }
 
-      // 1. Create auth user with metadata for trigger handling.
-      final res = await client.auth.signUp(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        data: {
-          'role': _role,
-          'display_name': _nameController.text.trim(),
+      // Prepare registration payload with default onboarding values
+      // These will be updated by the onboarding screen
+      final payload = {
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text,
+        'display_name': _nameController.text.trim(),
+        'role': _role,
+        'learning_language': 'telugu', // default
+        'learning_goal': 'learn_basics', // default
+        'learning_style': 'child_learner', // default
+        'app_preferences': {},
+        'accessibility_preferences': {
+          'larger_text': false,
+          'audio_first': false,
+          'reduced_animations': false,
+          'high_contrast': false,
         },
-      );
+      };
 
-      if (res.user == null) throw Exception('Sign up failed. Try again.');
+      // Call backend registration endpoint
+      final response = await http.post(
+        Uri.parse('$backendUrl/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode != 200) {
+        final errorBody = jsonDecode(response.body);
+        throw Exception(errorBody['detail'] ?? 'Registration failed. Please try again.');
+      }
 
       if (!mounted) return;
 
@@ -42,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (_role == 'adult') {
         Navigator.pushNamedAndRemoveUntil(context, '/adult-dashboard', (_) => false);
       } else {
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (_) => false);
       }
     } catch (e) {
       if (mounted) setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
@@ -82,13 +127,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ]),
               const SizedBox(height: 24),
 
-              TextField(controller: _nameController, decoration: AppTheme.inputDecoration('Full Name')),
+              TextField(controller: _nameController, decoration: AppTheme.inputDecoration('Username')),
               const SizedBox(height: 16),
               TextField(controller: _emailController, keyboardType: TextInputType.emailAddress,
                 decoration: AppTheme.inputDecoration('Email')),
               const SizedBox(height: 16),
               TextField(controller: _passwordController, obscureText: true,
                 decoration: AppTheme.inputDecoration('Password')),
+              const SizedBox(height: 16),
+              TextField(controller: _confirmController, obscureText: true,
+                decoration: AppTheme.inputDecoration('Confirm Password')),
               const SizedBox(height: 8),
 
               if (_error != null)
@@ -103,7 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: _loading
                   ? const SizedBox(height: 20, width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Text('Sign Up', style: TextStyle(fontSize: 16)),
+                  : const Text('Create account', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),

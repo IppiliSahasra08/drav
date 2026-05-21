@@ -43,6 +43,84 @@ class SubmissionRequest(BaseModel):
     is_correct: bool
     response_time_ms: int
 
+class AccessibilityPreferences(BaseModel):
+    larger_text: Optional[bool] = False
+    audio_first: Optional[bool] = False
+    reduced_animations: Optional[bool] = False
+    high_contrast: Optional[bool] = False
+
+class RegistrationRequest(BaseModel):
+    email: str
+    password: str
+    display_name: str
+    role: str = "child"
+    learning_language: str
+    learning_goal: str
+    learning_style: str
+    app_preferences: Optional[dict] = None
+    accessibility_preferences: Optional[AccessibilityPreferences] = None
+
+@app.post("/auth/register")
+async def register_user(req: RegistrationRequest):
+    """Register a new user with Supabase Auth and onboarding metadata.
+    
+    The metadata is automatically synced to the profiles table via the
+    handle_auth_user_sync() trigger function.
+    """
+    try:
+        # Validate inputs
+        if not req.email or not req.password or not req.display_name:
+            raise HTTPException(status_code=400, detail="Email, password, and display_name are required.")
+        
+        if len(req.password) < 6:
+            raise HTTPException(status_code=400, detail="Password must be at least 6 characters long.")
+        
+        # Construct metadata to be stored in raw_user_meta_data
+        metadata = {
+            "role": req.role,
+            "display_name": req.display_name,
+            "onboarding_completed": True,
+            "learning_language": req.learning_language,
+            "learning_goal": req.learning_goal,
+            "learning_style": req.learning_style,
+            "preferences": {
+                "app_preferences": req.app_preferences or {},
+                "accessibility_preferences": (
+                    req.accessibility_preferences.dict() 
+                    if req.accessibility_preferences 
+                    else {}
+                ),
+            },
+        }
+        
+        # Call Supabase Auth signUp with metadata
+        res = supabase.auth.sign_up(
+            email=req.email,
+            password=req.password,
+            options={"data": metadata}
+        )
+        
+        if not res.user:
+            raise HTTPException(
+                status_code=400,
+                detail="User registration failed. Please try again."
+            )
+        
+        print(f"[/auth/register] User {res.user.id} registered successfully")
+        
+        return {
+            "status": "ok",
+            "user_id": res.user.id,
+            "email": res.user.email,
+            "message": "Registration successful. Please check your email to confirm."
+        }
+    
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f'[/auth/register] error: {str(e)}')
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/auth/sync")
 async def auth_sync(req: AuthSyncRequest):
     """Upserts user profile on login."""

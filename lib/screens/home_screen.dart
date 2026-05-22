@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/auth_service.dart';
 import '../models/exercise.dart';
 import '../theme.dart';
@@ -31,8 +32,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadProgress() async {
     final user = AuthService().currentUser;
     if (user == null) return;
-    // keep backend progress calls unchanged; preserve existing behavior
-    // but also load a lightweight local streak value for Day 1 MVP
+    // Try loading canonical progress (xp & streak) from Supabase first.
+    try {
+      if (AuthService().isSupabaseReady) {
+        final client = Supabase.instance.client;
+        final profile = await client
+            .from('profiles')
+            .select('xp,streak_days')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (profile != null) {
+          final xp = (profile['xp'] as int?) ?? 0;
+          final days = (profile['streak_days'] as int?) ?? 0;
+          if (mounted)
+            setState(() {
+              _xpTotal = xp;
+              _streakDays = days;
+            });
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // Fallback to local prefs for offline/demo mode
     try {
       final prefs = await SharedPreferences.getInstance();
       final days = prefs.getInt('streak_days') ?? 0;

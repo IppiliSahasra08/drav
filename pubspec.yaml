@@ -18,6 +18,7 @@ dependencies:
   # Clean state management — simpler than Redux/Bloc for MVP
   provider: ^6.1.2
   shared_preferences: ^2.5.5
+  flutter_tts: ^3.5.3
 
 dev_dependencies:
   flutter_test:

@@ -45,4 +45,67 @@
     "character": "ఆ",
     "answer": "aa"
   }
+  ,
+  {
+    "category": "greetings",
+    "type": "mcq",
+    "question": "What does this mean?",
+    "character": "నమస్తే",
+    "options": ["Hello", "Thank you", "How are you?", "Yes"],
+    "answer": "Hello"
+  },
+  {
+    "category": "greetings",
+    "type": "typing",
+    "question": "Type the transliteration for the phrase",
+    "character": "నమస్తే",
+    "answer": "namaste"
+  },
+  {
+    "category": "greetings",
+    "type": "mcq",
+    "question": "What does this mean?",
+    "character": "ధన్యవాదాలు",
+    "options": ["Please", "Thank you", "Sorry", "Goodbye"],
+    "answer": "Thank you"
+  },
+  {
+    "category": "greetings",
+    "type": "typing",
+    "question": "Type the transliteration for the phrase",
+    "character": "ధన్యవాదాలు",
+    "answer": "dhanyavadalu"
+  },
+  {
+    "category": "greetings",
+    "type": "mcq",
+    "question": "What does this mean?",
+    "character": "ఎలా ఉన్నారు?",
+    "options": ["Where are you?", "How are you?", "What's your name?", "I am fine"],
+    "answer": "How are you?"
+  },
+  {
+    "category": "greetings",
+    "type": "mcq",
+    "question": "What does this mean?",
+    "character": "నా పేరు...",
+    "options": ["My name is...", "I am hungry", "I like it", "Good night"],
+    "answer": "My name is..."
+  },
+  {
+    "category": "greetings",
+    "type": "mcq",
+    "question": "What does this mean?",
+    "character": "అవును",
+    "options": ["No", "Maybe", "Yes", "Please"],
+    "answer": "Yes"
+  },
+  {
+    "category": "greetings",
+    "type": "mcq",
+    "question": "What does this mean?",
+    "character": "కాదు",
+    "options": ["Yes", "No", "Hello", "Thank you"],
+    "answer": "No"
+  }
 ]

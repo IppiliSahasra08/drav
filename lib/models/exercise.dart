@@ -31,6 +31,7 @@ class Exercise {
   final String type; // 'multiple_choice' | 'fill_in_blank'
   final String promptText;
   final String promptScript;
+  final String transliteration;
   final String correctAnswer;
   final List<String>? options;
   final int difficulty;
@@ -41,6 +42,7 @@ class Exercise {
     required this.type,
     required this.promptText,
     required this.promptScript,
+    required this.transliteration,
     required this.correctAnswer,
     this.options,
     required this.difficulty,
@@ -56,12 +58,15 @@ class Exercise {
       }
     }
 
+    final translit = (json['transliteration'] as String?) ?? (json['prompt_transliteration'] as String?) ?? '';
+
     return Exercise(
       id: json['id'] as String,
       skillId: json['skill_id'] as String,
       type: json['type'] as String,
       promptText: json['prompt_text'] as String,
       promptScript: json['prompt_script'] as String,
+      transliteration: translit,
       correctAnswer: json['correct_answer'] as String,
       options: opts,
       difficulty: (json['difficulty'] as num?)?.toInt() ?? 1,

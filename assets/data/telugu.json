@@ -4,6 +4,7 @@
     "type": "mcq",
     "question": "Which Telugu vowel is shown?",
     "character": "అ",
+    "transliteration": "a",
     "options": ["అ", "ఆ", "ఇ", "ఈ"],
     "answer": "అ"
   },
@@ -12,6 +13,7 @@
     "type": "mcq",
     "question": "Which vowel is 'AA'?",
     "character": "ఆ",
+    "transliteration": "aa",
     "options": ["అ", "ఆ", "ఇ", "ఊ"],
     "answer": "ఆ"
   },
@@ -20,6 +22,7 @@
     "type": "mcq",
     "question": "Select the consonant 'ka'",
     "character": "క",
+    "transliteration": "ka",
     "options": ["క", "ఖ", "గ", "ఙ"],
     "answer": "క"
   },
@@ -28,6 +31,7 @@
     "type": "mcq",
     "question": "Which character is 'nga'?",
     "character": "ఙ",
+    "transliteration": "nga",
     "options": ["ఙ", "చ", "ట", "న"],
     "answer": "ఙ"
   },
@@ -36,14 +40,16 @@
     "type": "typing",
     "question": "Type the transliteration for the letter shown",
     "character": "క",
-    "answer": "ka"
+    "answer": "ka",
+    "transliteration": "ka"
   },
   {
     "category": "Typing Quiz",
     "type": "typing",
     "question": "Type the transliteration for the letter shown",
     "character": "ఆ",
-    "answer": "aa"
+    "answer": "aa",
+    "transliteration": "aa"
   }
   ,
   {
@@ -51,6 +57,7 @@
     "type": "mcq",
     "question": "What does this mean?",
     "character": "నమస్తే",
+    "transliteration": "Namaste",
     "options": ["Hello", "Thank you", "How are you?", "Yes"],
     "answer": "Hello"
   },
@@ -59,13 +66,15 @@
     "type": "typing",
     "question": "Type the transliteration for the phrase",
     "character": "నమస్తే",
-    "answer": "namaste"
+    "answer": "namaste",
+    "transliteration": "namaste"
   },
   {
     "category": "greetings",
     "type": "mcq",
     "question": "What does this mean?",
     "character": "ధన్యవాదాలు",
+    "transliteration": "Dhanyavaadaalu",
     "options": ["Please", "Thank you", "Sorry", "Goodbye"],
     "answer": "Thank you"
   },
@@ -74,13 +83,15 @@
     "type": "typing",
     "question": "Type the transliteration for the phrase",
     "character": "ధన్యవాదాలు",
-    "answer": "dhanyavadalu"
+    "answer": "dhanyavadalu",
+    "transliteration": "dhanyavadalu"
   },
   {
     "category": "greetings",
     "type": "mcq",
     "question": "What does this mean?",
     "character": "ఎలా ఉన్నారు?",
+    "transliteration": "Ela unnaru?",
     "options": ["Where are you?", "How are you?", "What's your name?", "I am fine"],
     "answer": "How are you?"
   },
@@ -89,6 +100,7 @@
     "type": "mcq",
     "question": "What does this mean?",
     "character": "నా పేరు...",
+    "transliteration": "Naa peru...",
     "options": ["My name is...", "I am hungry", "I like it", "Good night"],
     "answer": "My name is..."
   },
@@ -97,6 +109,7 @@
     "type": "mcq",
     "question": "What does this mean?",
     "character": "అవును",
+    "transliteration": "Avunu",
     "options": ["No", "Maybe", "Yes", "Please"],
     "answer": "Yes"
   },
@@ -105,6 +118,7 @@
     "type": "mcq",
     "question": "What does this mean?",
     "character": "కాదు",
+    "transliteration": "Kaadu",
     "options": ["Yes", "No", "Hello", "Thank you"],
     "answer": "No"
   }

@@ -1,7 +1,7 @@
 [
   { "category": "Vowels", "type": "mcq", "question": "Which Telugu vowel is shown?", "character": "అ", "options": ["అ", "ఆ", "ఇ", "ఈ"], "answer": "అ" },
-  { "category": "Vowels", "type": "mcq", "question": "Which vowel is 'AA'?", "character": "ఆ", "options": ["అ", "ఆ", "ఇ", "ఊ"], "answer": "ఆ" },
-  { "category": "Vowels", "type": "mcq", "question": "Which vowel is 'I'?", "character": "ఇ", "options": ["ఉ", "ఇ", "ఈ", "ఎ"], "answer": "ఇ" },
-  { "category": "Vowels", "type": "typing", "question": "Type the transliteration for the vowel shown", "character": "ఆ", "answer": "aa" },
-  { "category": "Vowels", "type": "typing", "question": "Type the transliteration for the vowel shown", "character": "ఇ", "answer": "i" }
+  { "category": "Vowels", "type": "mcq", "question": "Which vowel is 'AA'?", "character": "ఆ", "transliteration": "aa", "options": ["అ", "ఆ", "ఇ", "ఊ"], "answer": "ఆ" },
+  { "category": "Vowels", "type": "mcq", "question": "Which vowel is 'I'?", "character": "ఇ", "transliteration": "i", "options": ["ఉ", "ఇ", "ఈ", "ఎ"], "answer": "ఇ" },
+  { "category": "Vowels", "type": "typing", "question": "Type the transliteration for the vowel shown", "character": "ఆ", "answer": "aa", "transliteration": "aa" },
+  { "category": "Vowels", "type": "typing", "question": "Type the transliteration for the vowel shown", "character": "ఇ", "answer": "i", "transliteration": "i" }
 ]

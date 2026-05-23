@@ -35,12 +35,15 @@ class LocalQuizProvider {
         opts = optionsRaw.map((e) => e.toString()).toList();
       }
 
+      final translit = (item['transliteration'] as String?) ?? '';
+
       final exercise = Exercise(
         id: item['id']?.toString() ?? '${language}_$i',
         skillId: skill.id,
         type: type,
         promptText: (item['question'] as String?) ?? '',
         promptScript: (item['character'] as String?) ?? '',
+        transliteration: translit,
         correctAnswer: (item['answer'] as String?) ?? '',
         options: opts,
         difficulty: (item['difficulty'] as int?) ?? 1,

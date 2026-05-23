@@ -242,7 +242,18 @@ class _LessonScreenState extends State<LessonScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 12),
+
+          // Transliteration (if present)
+          if (exercise.transliteration.isNotEmpty) ...[
+            Text(
+              exercise.transliteration,
+              style: const TextStyle(fontSize: 20, color: AppTheme.textSecondary, height: 1.3),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+          ] else
+            const SizedBox(height: 28),
 
           // ── Multiple choice ──
           if (isMultiple)

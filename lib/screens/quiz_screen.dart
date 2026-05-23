@@ -112,11 +112,17 @@ class _QuizScreenState extends State<QuizScreen> {
         final char = (map['character'] as String?) ?? '';
         final type = (map['type'] as String?) ?? '';
         final answer = (map['answer'] as String?) ?? '';
+        final translitField = (map['transliteration'] as String?) ?? '';
         if (char.isEmpty) continue;
-        if (type == 'typing') {
+        // Prefer an explicit `transliteration` field when present.
+        if (translitField.isNotEmpty) {
+          translits[char] = translitField;
+        } else if (type == 'typing') {
           // treat typing answers as transliteration
           translits[char] = answer;
-        } else if (type == 'mcq') {
+        }
+
+        if (type == 'mcq') {
           // treat mcq answer as English meaning
           meanings[char] = answer;
         }
@@ -152,6 +158,14 @@ class _QuizScreenState extends State<QuizScreen> {
         _isLoading = false;
         _phase = LessonPhase.learn;
       });
+      // Debug: print loaded phrases to verify transliteration presence
+      // ignore: avoid_print
+      print('Loaded ${_phrases.length} lesson phrases:');
+      for (var i = 0; i < _phrases.length && i < 10; i++) {
+        final p = _phrases[i];
+        // ignore: avoid_print
+        print('Phrase ${i}: char="${p.character}" translit="${p.transliteration}" meaning="${p.meaning}"');
+      }
     } catch (e) {
       if (mounted) setState(() {
         _isLoading = false;
@@ -285,6 +299,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(children: [
+                    // Debug: log transliteration to ensure data flow
                     Text(phrase.character, style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w800)),
                     const SizedBox(height: 12),
                     Text(phrase.transliteration, style: const TextStyle(fontSize: 20, color: AppTheme.textSecondary)),
